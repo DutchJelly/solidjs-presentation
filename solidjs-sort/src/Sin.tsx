@@ -4,6 +4,7 @@ import {
   createMemo,
   createSignal,
   For,
+  onCleanup,
 } from "solid-js";
 
 const ITEM_COUNT = 2000;
@@ -28,6 +29,7 @@ const Sin: Component = () => {
   const [offset, setOffset] = createSignal(0);
   const [frameInterval, setFrameInterval] = createSignal(0);
   let previousCall = Date.now();
+  let isUnmounted = false;
 
   const values = createMemo(() => {
     return Array.from({ length: ITEM_COUNT }, (_, i) =>
@@ -39,10 +41,15 @@ const Sin: Component = () => {
     setOffset(offset() + STEP_SIZE);
     setFrameInterval(Date.now() - previousCall);
     previousCall = Date.now();
+    if (isUnmounted) return;
     requestAnimationFrame(step);
   };
 
   requestAnimationFrame(step);
+
+  onCleanup(() => {
+    isUnmounted = true;
+  });
 
   const fps = createMemo(() => {
     return averageFps(Math.round(10000 / frameInterval()) / 10);
