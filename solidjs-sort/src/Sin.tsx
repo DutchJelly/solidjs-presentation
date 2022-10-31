@@ -58,7 +58,7 @@ const Sin: Component = () => {
   return (
     <div class="h-screen w-screen bg-black grid grid-cols-1 grid-rows-6 p-8">
       <div class="col-span-1 row-span-1 flex items-center">
-        <h2 class="text-8xl sm:text-6xl text-slate-100 mx-auto border-b-orange-500 border-b-4 pb-2">
+        <h2 class="text-6xl text-slate-100 mx-auto border-b-orange-500 border-b-4 pb-2">
           SolidJS wave demo
         </h2>
       </div>
