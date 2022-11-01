@@ -1,33 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  animationFrameScheduler,
-  BehaviorSubject,
-  map,
-  Observable,
-  bufferCount,
-  observeOn,
-  of,
-  Subscriber,
-  pipe,
-} from 'rxjs';
+import { Component } from '@angular/core';
+import { map, Observable, bufferCount } from 'rxjs';
 
 const ITEM_COUNT = 2000;
 const STEP_SIZE = 0.1;
 const BAR_SIZE = 0.01;
-
-let previousFps: number[] = [
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-];
-const averageFps = (fps: number) => {
-  previousFps.push(fps);
-  previousFps = previousFps.slice(1);
-  return Math.round(
-    previousFps.reduce((p, c) => {
-      if (p === 0) return c;
-      return (p + c) / 2;
-    }, 0)
-  );
-};
 
 const getFrameEmitter: () => Observable<[number, number]> = () => {
   return new Observable((subscriber) => {
