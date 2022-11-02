@@ -73,10 +73,9 @@ const Sin = () => {
         {isNaN(fps) ? "..." : fps} FPS
       </h4>
       <div className="col-span-1 row-span-4 pt-8 flex flex-row items-end">
-        {values.map((value, i) => {
+        {values.map((value) => {
           return (
             <div
-              key={i}
               className="flex-1 bg-orange-500"
               style={{ height: `${value + 1}%` }}
             ></div>
