@@ -9,10 +9,11 @@ const FPS_COUNT_INTERVAL = 100;
 let previousFps: number[] = [];
 
 const getAverageFps: () => number = () => {
-  return previousFps.reduce((p, c) => {
-    if (isNaN(p)) return c;
-    return (p + c) / 2;
-  }, NaN);
+  return (
+    previousFps.reduce((p, c) => {
+      return p + c;
+    }, 0) / previousFps.length
+  );
 };
 
 let previousCall = Date.now();
@@ -73,9 +74,10 @@ const Sin = () => {
         {isNaN(fps) ? "..." : fps} FPS
       </h4>
       <div className="col-span-1 row-span-4 pt-8 flex flex-row items-end">
-        {values.map((value) => {
+        {values.map((value, i) => {
           return (
             <div
+              key={i}
               className="flex-1 bg-orange-500"
               style={{ height: `${value + 1}%` }}
             ></div>

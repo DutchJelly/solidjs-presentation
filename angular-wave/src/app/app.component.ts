@@ -52,19 +52,9 @@ export class AppComponent {
     map((buffer) =>
       Math.round(
         buffer.reduce((p, c) => {
-          if (p === 0) return c;
-          return (p + c) / 2;
-        }, 0)
+          return p + c;
+        }, 0) / buffer.length
       )
     )
   );
-
-  // values$ = this.animationFrame$.pipe(
-  //   map(() => {
-  //     this.offset += STEP_SIZE;
-  //     return Array.from({ length: ITEM_COUNT }, (_, i) =>
-  //       Math.floor((Math.sin(this.offset + i * BAR_SIZE) + 1) * 50)
-  //     );
-  //   })
-  // );
 }

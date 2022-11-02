@@ -31,3 +31,23 @@ document
 document
   .getElementById("backButton")
   ?.addEventListener("click", changeUrlIndex(-1));
+
+let fpsCountBuffer: number[] = [];
+
+let previousTime = Date.now();
+
+const step = () => {
+  const currentTime = Date.now();
+  fpsCountBuffer.push(1000 / (currentTime - previousTime));
+  fpsCountBuffer = fpsCountBuffer.slice(0, 10);
+  previousTime = currentTime;
+  requestAnimationFrame(step);
+};
+
+requestAnimationFrame(step);
+
+setInterval(() => {
+  console.log(
+    fpsCountBuffer.reduce((p, c) => p + c, 0) / fpsCountBuffer.length
+  );
+}, 1000);

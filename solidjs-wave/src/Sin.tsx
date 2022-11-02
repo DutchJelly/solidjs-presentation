@@ -17,10 +17,11 @@ const FPS_COUNT_INTERVAL = 100;
 let previousFps: number[] = [];
 
 const getAverageFps: () => number = () => {
-  return previousFps.reduce((p, c) => {
-    if (isNaN(p)) return c;
-    return (p + c) / 2;
-  }, NaN);
+  return (
+    previousFps.reduce((p, c) => {
+      return p + c;
+    }, 0) / previousFps.length
+  );
 };
 
 const Sin: Component = () => {

@@ -22,9 +22,8 @@
   const fpsCalculatorInterval = setInterval(() => {
     fps = Math.round(
       fpsBuffer.reduce((previousFrameTime, currentFrameTime) => {
-        if ((previousFrameTime = -1)) return currentFrameTime;
-        return (previousFrameTime + currentFrameTime) / 2;
-      }, -1)
+        return previousFrameTime + currentFrameTime;
+      }, 0) / fpsBuffer.length
     );
   }, FPS_COUNT_INTERVAL);
 
