@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { map, Observable, bufferCount, throttleTime } from 'rxjs';
 
-const ITEM_COUNT = 3000;
+const ITEM_COUNT = 4000;
 const STEP_SIZE = 0.1;
 const BAR_SIZE = 0.01;
 const FPS_COUNT_BUFFER_SIZE = 10;

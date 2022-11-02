@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
 
-  const ITEM_COUNT = 3000;
+  const ITEM_COUNT = 4000;
   const STEP_SIZE = 0.1;
   const BAR_SIZE = 0.01;
   const FPS_COUNT_BUFFER_SIZE = 100;
@@ -73,9 +73,12 @@
     >
       {fps} FPS
     </h4>
-    <div class="col-span-1 row-span-4 pt-8 flex flex-row items-end">
+    <div class="col-span-1 row-span-4 pt-8">
       {#each values as value}
-        <div class="flex-1 bg-orange-500" style="height: {value + 1}%;" />
+        <div
+          class="inline-block bg-orange-500"
+          style="height: {value + 1}%; width: {100 / ITEM_COUNT}%"
+        />
       {/each}
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-const ITEM_COUNT = 3000;
+const ITEM_COUNT = 4000;
 const STEP_SIZE = 0.1;
 const BAR_SIZE = 0.01;
 const FPS_COUNT_BUFFER_SIZE = 100;
@@ -73,13 +73,12 @@ const Sin = () => {
       >
         {isNaN(fps) ? "..." : fps} FPS
       </h4>
-      <div className="col-span-1 row-span-4 pt-8 flex flex-row items-end">
+      <div className="col-span-1 row-span-4 pt-8">
         {values.map((value, i) => {
           return (
             <div
-              key={i}
-              className="flex-1 bg-orange-500"
-              style={{ height: `${value + 1}%` }}
+              className="bg-orange-500 inline-block"
+              style={{ height: `${value + 1}%`, width: `${100 / ITEM_COUNT}%` }}
             ></div>
           );
         })}
