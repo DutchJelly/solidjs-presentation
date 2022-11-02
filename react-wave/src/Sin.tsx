@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
-const ITEM_COUNT = 4000;
+const ITEM_COUNT = 3000;
 const STEP_SIZE = 0.1;
-const BAR_SIZE = 0.005;
-const FPS_COUNT_BUFFER_SIZE = 10;
+const BAR_SIZE = 0.01;
+const FPS_COUNT_BUFFER_SIZE = 100;
 const FPS_COUNT_INTERVAL = 100;
 
 let previousFps: number[] = [];
@@ -34,7 +34,7 @@ const Sin = () => {
       setOffset((offset) => offset + STEP_SIZE);
       const currentTime = Date.now();
       previousFps.unshift(1000 / (currentTime - previousCall));
-      previousFps.slice(0, FPS_COUNT_BUFFER_SIZE);
+      previousFps = previousFps.slice(0, FPS_COUNT_BUFFER_SIZE);
       previousCall = Date.now();
       animationFrameGetter = requestAnimationFrame(step);
     };
