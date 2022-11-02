@@ -1,0 +1,18 @@
+{
+  "name": "wave-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "showcase": "concurrently --kill-others \"http-server ../solidjs-wave/dist/ -p 3001\" \"http-server ../react-wave/dist/ -p 3002\" \"http-server ../svelte-wave/dist/ -p 3003\" \"http-server ../angular-wave/dist/angular-wave -p 3004\" \"vite\"",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.4",
+    "vite": "^3.2.0"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

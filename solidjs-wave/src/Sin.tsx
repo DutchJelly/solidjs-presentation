@@ -5,31 +5,30 @@ import {
   createSignal,
   For,
   onCleanup,
+  onMount,
 } from "solid-js";
 
-const ITEM_COUNT = 2000;
+const ITEM_COUNT = 4000;
 const STEP_SIZE = 0.1;
-const BAR_SIZE = 0.01;
+const BAR_SIZE = 0.005;
+const FPS_COUNT_BUFFER_SIZE = 10;
+const FPS_COUNT_INTERVAL = 100;
 
-let previousFps: number[] = [
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-];
-const averageFps = (fps: number) => {
-  previousFps.push(fps);
-  previousFps = previousFps.slice(1);
-  return Math.round(
-    previousFps.reduce((p, c) => {
-      if (p === 0) return c;
-      return (p + c) / 2;
-    }, 0)
-  );
+let previousFps: number[] = [];
+
+const getAverageFps: () => number = () => {
+  return previousFps.reduce((p, c) => {
+    if (isNaN(p)) return c;
+    return (p + c) / 2;
+  }, NaN);
 };
 
 const Sin: Component = () => {
   const [offset, setOffset] = createSignal(0);
-  const [frameInterval, setFrameInterval] = createSignal(0);
+  const [fps, setFps] = createSignal(NaN);
   let previousCall = Date.now();
   let isUnmounted = false;
+  let animationFrameRequestor: number;
 
   const values = createMemo(() => {
     return Array.from({ length: ITEM_COUNT }, (_, i) =>
@@ -39,20 +38,34 @@ const Sin: Component = () => {
 
   const step = () => {
     setOffset(offset() + STEP_SIZE);
-    setFrameInterval(Date.now() - previousCall);
-    previousCall = Date.now();
+    const currentTime = Date.now();
+    previousFps.unshift(1000 / (currentTime - previousCall));
+    previousFps = previousFps.slice(0, FPS_COUNT_BUFFER_SIZE);
+    previousCall = currentTime;
     if (isUnmounted) return;
-    requestAnimationFrame(step);
+    animationFrameRequestor = requestAnimationFrame(step);
   };
 
-  requestAnimationFrame(step);
+  const fpsCalculateInterval = setInterval(() => {
+    setFps(Math.round(getAverageFps()));
+  }, FPS_COUNT_INTERVAL);
 
-  onCleanup(() => {
-    isUnmounted = true;
+  const DOMLoadHandler = () => {
+    animationFrameRequestor = requestAnimationFrame(step);
+  };
+
+  onMount(() => {
+    if (document.readyState !== "loading") {
+      DOMLoadHandler();
+    } else {
+      document.addEventListener("DOMContentLoaded", DOMLoadHandler);
+    }
   });
 
-  const fps = createMemo(() => {
-    return averageFps(Math.round(10000 / frameInterval()) / 10);
+  onCleanup(() => {
+    document.removeEventListener("DOMContentLoaded", DOMLoadHandler);
+    clearInterval(fpsCalculateInterval);
+    cancelAnimationFrame(animationFrameRequestor);
   });
 
   return (

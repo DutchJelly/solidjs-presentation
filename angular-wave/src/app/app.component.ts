@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { map, Observable, bufferCount } from 'rxjs';
+import { map, Observable, bufferCount, throttleTime } from 'rxjs';
 
-const ITEM_COUNT = 2000;
+const ITEM_COUNT = 4000;
 const STEP_SIZE = 0.1;
-const BAR_SIZE = 0.01;
+const BAR_SIZE = 0.005;
+const FPS_COUNT_BUFFER_SIZE = 10;
+const FPS_COUNT_INTERVAL = 100;
 
 const getFrameEmitter: () => Observable<[number, number]> = () => {
   return new Observable((subscriber) => {
@@ -44,13 +46,16 @@ export class AppComponent {
   );
 
   fps$ = this.frames$.pipe(
-    map(([_, interval]) => Math.round(10000 / interval) / 10),
-    bufferCount(10),
+    map(([_, interval]) => 1000 / interval),
+    bufferCount(FPS_COUNT_BUFFER_SIZE),
+    throttleTime(FPS_COUNT_INTERVAL),
     map((buffer) =>
-      buffer.reduce((p, c) => {
-        if (p === 0) return c;
-        return (p + c) / 2;
-      }, 0)
+      Math.round(
+        buffer.reduce((p, c) => {
+          if (p === 0) return c;
+          return (p + c) / 2;
+        }, 0)
+      )
     )
   );
 

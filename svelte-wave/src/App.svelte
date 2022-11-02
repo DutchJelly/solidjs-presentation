@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
 
-  const ITEM_COUNT = 2000;
+  const ITEM_COUNT = 4000;
   const STEP_SIZE = 0.1;
-  const BAR_SIZE = 0.01;
+  const BAR_SIZE = 0.005;
   const FPS_COUNT_BUFFER_SIZE = 10;
   const FPS_COUNT_INTERVAL = 100;
 
@@ -40,9 +40,20 @@
     animationFrameWaiter = requestAnimationFrame(step);
   };
 
-  animationFrameWaiter = requestAnimationFrame(step);
+  const DOMLoadHandler = () => {
+    animationFrameWaiter = requestAnimationFrame(step);
+  };
+
+  onMount(() => {
+    if (document.readyState !== "loading") {
+      DOMLoadHandler();
+    } else {
+      document.addEventListener("DOMContentLoaded", DOMLoadHandler);
+    }
+  });
 
   onDestroy(() => {
+    document.removeEventListener("DOMContentLoaded", DOMLoadHandler);
     clearInterval(fpsCalculatorInterval);
     cancelAnimationFrame(animationFrameWaiter);
   });

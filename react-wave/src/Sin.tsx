@@ -1,28 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 
-const ITEM_COUNT = 2000;
+const ITEM_COUNT = 4000;
 const STEP_SIZE = 0.1;
-const BAR_SIZE = 0.01;
+const BAR_SIZE = 0.005;
+const FPS_COUNT_BUFFER_SIZE = 10;
+const FPS_COUNT_INTERVAL = 100;
 
-let previousFps: number[] = [
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-];
-const averageFps = (fps: number) => {
-  previousFps.push(fps);
-  previousFps = previousFps.slice(1);
-  return Math.round(
-    previousFps.reduce((p, c) => {
-      if (p === 0) return c;
-      return (p + c) / 2;
-    }, 0)
-  );
+let previousFps: number[] = [];
+
+const getAverageFps: () => number = () => {
+  return previousFps.reduce((p, c) => {
+    if (isNaN(p)) return c;
+    return (p + c) / 2;
+  }, NaN);
 };
 
 let previousCall = Date.now();
 
 const Sin = () => {
   const [offset, setOffset] = useState(0);
-  const [frameInterval, setFrameInterval] = useState(0);
+  const [fps, setFps] = useState(NaN);
 
   const values = useMemo(() => {
     return Array.from({ length: ITEM_COUNT }, (_, i) =>
@@ -31,24 +28,36 @@ const Sin = () => {
   }, [offset]);
 
   useEffect(() => {
-    let isUnmounted = false;
+    let animationFrameGetter: number;
+
     const step = () => {
       setOffset((offset) => offset + STEP_SIZE);
-      setFrameInterval(Date.now() - previousCall);
+      const currentTime = Date.now();
+      previousFps.unshift(1000 / (currentTime - previousCall));
+      previousFps.slice(0, FPS_COUNT_BUFFER_SIZE);
       previousCall = Date.now();
-      if (!isUnmounted) return;
-      requestAnimationFrame(step);
+      animationFrameGetter = requestAnimationFrame(step);
     };
-    requestAnimationFrame(step);
+    const handleDOMLoad = () => {
+      animationFrameGetter = requestAnimationFrame(step);
+    };
+
+    const fpsSetter = setInterval(() => {
+      setFps(Math.round(getAverageFps()));
+    }, FPS_COUNT_INTERVAL);
+
+    if (document.readyState !== "loading") {
+      handleDOMLoad();
+    } else {
+      document.addEventListener("DOMContentLoaded", handleDOMLoad);
+    }
 
     return () => {
-      isUnmounted = true;
+      document.removeEventListener("DOMContentLoaded", handleDOMLoad);
+      cancelAnimationFrame(animationFrameGetter);
+      clearInterval(fpsSetter);
     };
   }, []);
-
-  const fps = useMemo(() => {
-    return averageFps(Math.round(10000 / frameInterval) / 10);
-  }, [frameInterval]);
 
   return (
     <div className="h-screen w-screen bg-black grid grid-cols-1 grid-rows-6 p-8">
@@ -61,12 +70,13 @@ const Sin = () => {
         className="text-4xl row-span-1 mx-auto my-8"
         style={{ color: "rgba(256,256,256,0.75)" }}
       >
-        {Number.POSITIVE_INFINITY === fps ? "..." : fps} FPS
+        {isNaN(fps) ? "..." : fps} FPS
       </h4>
       <div className="col-span-1 row-span-4 pt-8 flex flex-row items-end">
         {values.map((value, i) => {
           return (
             <div
+              key={i}
               className="flex-1 bg-orange-500"
               style={{ height: `${value + 1}%` }}
             ></div>
