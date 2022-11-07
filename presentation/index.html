@@ -140,20 +140,6 @@
           </aside>
         </section>
         <section data-background-iframe="http://localhost:5173/"></section>
-        <section>
-          <h3>Converting a React app to a Solid app</h3>
-          <aside class="notes">
-            <ul>
-              <li>React syntax is very similar</li>
-              <li>Under the hood very different</li>
-              <li>
-                Lets translate a simple react app to a solid app, and compare
-                the two
-              </li>
-              <li>Show bundle size</li>
-            </ul>
-          </aside>
-        </section>
         <section data-auto-animate>
           <h3>Solid ecosystem</h3>
           <table style="font-size: 1.6rem">
@@ -185,13 +171,17 @@
               <tr>
                 <td>Control flow</td>
                 <td>
-                  For, Show, Switch, Index, ErrorBoundary, Suspense, Dynamic,
-                  Portal
+                  For, Show, Switch, Index, ErrorBoundary, Suspense/lazy,
+                  Dynamic, Portal
                 </td>
               </tr>
               <tr>
                 <td>Fetching</td>
                 <td>createResource</td>
+              </tr>
+              <tr>
+                <td>Routing</td>
+                <td>Router, Routes, Route, A</td>
               </tr>
             </tbody>
           </table>
@@ -243,6 +233,24 @@
               </script>
             </code></pre>
           </section>
+          <section>
+            <pre class="javascript"><code data-trim data-noescape>
+              <script type="text/template">
+          const AsyncComponent = lazy(async () => {
+            await new Promise((res) => setTimeout(res, 2000));
+            return import("./component.tsx")
+          })
+          
+          function App() {
+            return <ErrorBoundary fallback={<p>Error!</p>}><Suspense fallback={<p>Loading...</p>}>
+              <AsyncComponent />
+            </Suspense></ErrorBoundary>
+          }
+          
+          render(App, document.getElementById("app")!);
+        </script>
+      </code></pre>
+          </section>
         </section>
         <section>
           <h3>Zooming in: SSR</h3>
@@ -250,6 +258,20 @@
             <li>Stream from server to browser</li>
             <li>Solid start meta framework</li>
           </ul>
+        </section>
+        <section>
+          <h3>Converting a React app to a Solid app</h3>
+          <aside class="notes">
+            <ul>
+              <li>React syntax is very similar</li>
+              <li>Under the hood very different</li>
+              <li>
+                Lets translate a simple react app to a solid app, and compare
+                the two
+              </li>
+              <li>Show bundle size</li>
+            </ul>
+          </aside>
         </section>
       </div>
     </div>

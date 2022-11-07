@@ -4,6 +4,7 @@ import {
   createMemo,
   createSignal,
   For,
+  Index,
   onCleanup,
   onMount,
 } from "solid-js";
@@ -87,7 +88,10 @@ const Sin: Component = () => {
           {(value, i) => (
             <div
               class="bg-orange-500 inline-block"
-              style={{ height: `${value + 1}%`, width: `${100 / ITEM_COUNT}%` }}
+              style={{
+                height: `${value + 1}%`,
+                width: `${100 / ITEM_COUNT}%`,
+              }}
             ></div>
           )}
         </For>
