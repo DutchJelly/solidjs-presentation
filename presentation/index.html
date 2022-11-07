@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>SolidJS presentation</title>
+
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/night.css" />
+    <link rel="stylesheet" href="dist/styles.css" />
+    <link rel="stylesheet" href="plugin/highlight/github.css" />
+
+    <!-- <link rel="stylesheet" href="plugin/highlight/monokai.css" /> -->
+  </head>
+  <body>
+    <style></style>
+    <span class="logo" style="position: absolute; top: 20px; left: 20px"
+      ><img
+        src="dist/images/axxes_logo.png"
+        style="width: 100px; display: inline-block"
+        alt=""
+        srcset=""
+    /></span>
+
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <img
+            data-src="dist/images/solid.svg"
+            data-preload
+            style="
+              height: 180px;
+              margin: 0 auto 4rem auto;
+              background: transparent;
+            "
+          />
+          <h3>SolidJS: a reactive library</h3>
+          <p>
+            <small>Presented by Jelle Keulemans</small>
+          </p>
+        </section>
+        <section>
+          <h3>What is reactive programming?</h3>
+          <aside class="notes">
+            <ul>
+              <li>Vergelijking met excel spread sheet</li>
+              <li>Vergelijking met hoe web frameworks werken</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <pre class="javascript"><code data-trim data-noescape>
+          let message = "Hello Axxes";
+          console.log(message); // Logs Hello Axxes
+          message = "Hello Axxes!!";
+          console.log(message); // Need to call log again 🙁
+          </code></pre>
+          <p>Solid's solution</p>
+          <pre
+            class="javascript"
+          ><code data-trim data-noescape data-line-numbers="|1|3">
+            const [message, setMessage] = createSignal("Hello Axxes");
+
+            createEffect(() => {
+              console.log(message());
+            })
+
+            setMessage("Hello Axxes!!");
+          </code></pre>
+          <aside class="notes">
+            Solid heeft 3 primitives:
+            <ul>
+              <li>createSignal</li>
+              <li>createEffect</li>
+              <li>createMemo</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <h3>Manipulating the DOM with SolidJS</h3>
+          <p>Demo time: coding playground</p>
+          <aside class="notes">
+            <pre class="javascript"><code data-trim data-noescape>
+            import { createSignal, createEffect } from "solid-js";
+
+            const h1 = document.createElement("h1");
+            const button = document.createElement("button");
+            document.body.append(h1);
+            document.body.append(button);
+
+            const [message, setMessage] = createSignal("Hello world!");
+
+            button.innerText = "Be more enthousiastic";
+            button.onclick = () => setMessage(message() + "!");
+
+            createEffect(() => {
+              h1.innerText = message();
+            });
+            </code></pre>
+            <strong>Tussenstap 1:</strong>
+            <pre
+              class="jsx"
+            ><code data-trim data-noescape><script type="text/template">
+            import { createSignal } from "solid-js";
+
+            const [message, setMessage] = createSignal("Hello world!");
+
+            const h1 = <h1 innerText={message()}></h1>
+            const button = <button onClick={() => setMessage(message() + "!")}>Be more enthousiastic</button>
+
+            document.body.append(h1, button);
+            </script></code></pre>
+
+            <strong>Laatste stap</strong>
+            <pre
+              class="jsx"
+            ><code data-trim data-noescape><script type="text/template">
+            function App () {
+              const [message, setMessage] = createSignal("Hello world!");
+            
+              return <>
+                <h1>{message()}</h1>
+                <button onclick={() => setMessage(message() + "!")}>Be more enthusiastic</button>
+              </>
+            }
+            
+            render(App, document.getElementById("app")!);
+          </script></code></pre>
+
+            <strong
+              >Output van jsx compiler een beetje uitleggen, en laat zien dat
+              components maar 1x worden gecalld. Ook bijv dingen als classList
+              uitleggen.</strong
+            >
+          </aside>
+        </section>
+        <section data-background-iframe="http://localhost:5173/"></section>
+        <section>
+          <h3>Converting a React app to a Solid app</h3>
+          <aside class="notes">
+            <ul>
+              <li>React syntax is very similar</li>
+              <li>Under the hood very different</li>
+              <li>
+                Lets translate a simple react app to a solid app, and compare
+                the two
+              </li>
+              <li>Show bundle size</li>
+            </ul>
+          </aside>
+        </section>
+        <section data-auto-animate>
+          <h3>Solid ecosystem</h3>
+          <table style="font-size: 1.6rem">
+            <thead>
+              <tr>
+                <th>Categories</th>
+                <th>API's</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Life cycle</td>
+                <td>onMount, onCleanup, onError</td>
+              </tr>
+              <tr>
+                <td>State</td>
+                <td>createSignal, createStore</td>
+              </tr>
+              <tr>
+                <td>Component</td>
+                <td>
+                  createContext, useContext, children, lazy, createUniqueId
+                </td>
+              </tr>
+              <tr>
+                <td>SSR</td>
+                <td>hydrate, renderToString, renderToStream</td>
+              </tr>
+              <tr>
+                <td>Control flow</td>
+                <td>
+                  For, Show, Switch, Index, ErrorBoundary, Suspense, Dynamic,
+                  Portal
+                </td>
+              </tr>
+              <tr>
+                <td>Fetching</td>
+                <td>createResource</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <section>
+            <h3>Zooming in: Control flow</h3>
+
+            <ul>
+              <li>No diffing, so do not use map</li>
+              <li>Very generic, routing is also possible</li>
+            </ul>
+          </section>
+          <section>
+            <pre
+              class="javascript"
+            ><code data-trim data-noescape data-line-numbers="|9,12"  >
+              <script type="text/template">
+              function App() {
+                const [list, setList] = createSignal<ListItem[]>([]);
+                setTimeout(() => {
+                  setList(
+                    [{name: "Javascript"}, {name: "Typescript"}, {name: "Java"}]
+                  );
+                }, 1000);
+
+                return <ul><For each={list()} fallback={<p>Loading...</p>}>
+                  {(item) => <Show 
+                    when={item.name !== "Java"} 
+                    fallback={<li>Invalid language</li>
+                  }><li>{item.name}</li></Show>}
+                </For></ul>
+              }
+              </script>
+            </code></pre>
+          </section>
+          <section>
+            <pre class="javascript"><code data-trim data-noescape>
+              <script type="text/template">
+                function App() {
+                  return <ErrorBoundary fallback={
+                    <ErrorBoundary fallback={<h1>Please use JS syntax</h1>}>
+                      {printf("I love C")}
+                    </ErrorBoundary>
+                  }>
+                    {echo("I love bash")}
+                  </ErrorBoundary>
+                }
+              </script>
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <h3>Zooming in: SSR</h3>
+          <ul>
+            <li>Stream from server to browser</li>
+            <li>Solid start meta framework</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>
