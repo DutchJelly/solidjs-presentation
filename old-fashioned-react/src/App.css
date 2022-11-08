@@ -1,0 +1,15 @@
+.game-grid {
+  display: grid;
+  grid-template-rows: 100px 1fr repeat(3, 150px);
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-areas:
+    "header header header header header header header"
+    ".      .         middle    middle   middle     .     ."
+    ".      twoD       middle    middle   middle     nineD    ."
+    "AD     threeD     JD        QD       KD         eightD   zeroD"
+    ".      fourD      fiveD     .        sixD       sevenD   .";
+}
+
+body {
+  background-color: black;
+}

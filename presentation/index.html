@@ -82,10 +82,11 @@
           </aside>
         </section>
         <section>
-          <h3>Manipulating the DOM with SolidJS</h3>
-          <p>Demo time: coding playground</p>
-          <aside class="notes">
-            <pre class="javascript"><code data-trim data-noescape>
+          <section>
+            <h3>Manipulating the DOM with SolidJS</h3>
+            <p>Demo time: coding playground</p>
+            <aside class="notes">
+              <pre class="javascript"><code data-trim data-noescape>
             import { createSignal, createEffect } from "solid-js";
 
             const h1 = document.createElement("h1");
@@ -102,10 +103,10 @@
               h1.innerText = message();
             });
             </code></pre>
-            <strong>Tussenstap 1:</strong>
-            <pre
-              class="jsx"
-            ><code data-trim data-noescape><script type="text/template">
+              <strong>Tussenstap 1:</strong>
+              <pre
+                class="jsx"
+              ><code data-trim data-noescape><script type="text/template">
             import { createSignal } from "solid-js";
 
             const [message, setMessage] = createSignal("Hello world!");
@@ -116,10 +117,10 @@
             document.body.append(h1, button);
             </script></code></pre>
 
-            <strong>Laatste stap</strong>
-            <pre
-              class="jsx"
-            ><code data-trim data-noescape><script type="text/template">
+              <strong>Laatste stap</strong>
+              <pre
+                class="jsx"
+              ><code data-trim data-noescape><script type="text/template">
             function App () {
               const [message, setMessage] = createSignal("Hello world!");
             
@@ -132,12 +133,55 @@
             render(App, document.getElementById("app")!);
           </script></code></pre>
 
-            <strong
-              >Output van jsx compiler een beetje uitleggen, en laat zien dat
-              components maar 1x worden gecalld. Ook bijv dingen als classList
-              uitleggen.</strong
-            >
-          </aside>
+              <strong
+                >Output van jsx compiler een beetje uitleggen, en laat zien dat
+                components maar 1x worden gecalld. Ook bijv dingen als classList
+                uitleggen.</strong
+              >
+            </aside>
+          </section>
+          <section data-auto-animate>
+            <h3>Why use render?</h3>
+            <pre class="jsx">
+              <code data-trim data-noescape>
+                <script type="text/template">
+                  const Header = () => {
+  
+                    let [toggle, setToggle] = createSignal(false);
+                  
+                    let timeout;
+                    createEffect(() => {
+                      const t = toggle();
+                      timeout = setTimeout(() => {
+                        setToggle(!t);
+                      }, 1000);
+                    })
+                  
+                    onCleanup(() => {
+                      clearTimeout(timeout);
+                    })
+                  
+                    return createMemo(() => toggle() ? 
+                      <h1>{message()}</h1> :
+                      <h2>Yes</h2>
+                    )
+                  }
+                  
+                  document.body.append(Header()());
+                  
+                  render(() => <Header />, document.getElementById("app"));
+                </script>
+                
+              </code>
+            </pre>
+          </section>
+          <section data-auto-animate>
+            <h3>Why use render?</h3>
+            <ul>
+              <li>Render will setup a reactive root</li>
+              <li>Render enables hot reloading</li>
+            </ul>
+          </section>
         </section>
         <section data-background-iframe="http://localhost:5173/"></section>
         <section data-auto-animate>
@@ -242,9 +286,9 @@
           })
           
           function App() {
-            return <ErrorBoundary fallback={<p>Error!</p>}><Suspense fallback={<p>Loading...</p>}>
+            return <Suspense fallback={<p>Loading...</p>}>
               <AsyncComponent />
-            </Suspense></ErrorBoundary>
+            </Suspense>
           }
           
           render(App, document.getElementById("app")!);
