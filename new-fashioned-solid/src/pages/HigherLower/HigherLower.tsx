@@ -6,6 +6,7 @@ import {
   onCleanup,
   For,
 } from "solid-js";
+import { createStore } from "solid-js/store";
 import {
   cards,
   alphaNamedCards,
@@ -26,7 +27,7 @@ type RemainingCardCounts = {
 
 const HigherLower = () => {
   const [state, setState] = createSignal<GameState>("pick");
-  const [remainingCards, setRemainingCards] = createSignal<RemainingCardCounts>(
+  const [remainingCards, setRemainingCards] = createStore<RemainingCardCounts>(
     Object.fromEntries(cards.map((c) => [c, 4]))
   );
 
@@ -35,7 +36,7 @@ const HigherLower = () => {
   let peekedCard: Card;
 
   const gameFinished = createMemo(() => {
-    return !Object.values(remainingCards()).find((r) => r > 0);
+    return !Object.values(remainingCards).find((r) => r > 0);
   });
 
   createEffect(() => {
@@ -95,22 +96,16 @@ const HigherLower = () => {
           : "correct"
       );
       if (peekedCardIndex === chosenCardIndex) {
-        setRemainingCards;
-
-        setRemainingCards((remaining) => {
-          const key = peekedCard.code.charAt(0) + "D";
-          return { ...remaining, ...{ [key]: remaining[key] - 1 } };
-        });
+        const key = peekedCard.code.charAt(0) + "D";
+        setRemainingCards([key], (value) => value - 1);
       }
     } else if (currentState === "higher" || currentState === "lower") {
       const peekedCardIndex = cards.findIndex(
         (c) => c.charAt(0) === peekedCard.code.charAt(0)
       );
       setState(peekedCardIndex === chosenCardIndex ? "correct" : "incorrect");
-      setRemainingCards((remaining) => {
-        const key = peekedCard.code.charAt(0) + "D";
-        return { ...remaining, ...{ [key]: remaining[key] - 1 } };
-      });
+      const key = peekedCard.code.charAt(0) + "D";
+      setRemainingCards([key], (value) => value - 1);
     }
     actionLock = false;
   };
@@ -154,9 +149,8 @@ const HigherLower = () => {
         {(card, i) => (
           <div
             id={card}
-            class={`h-full w-full ${
-              remainingCards()[card] > 0 ? "" : "hidden"
-            }`}
+            class="h-full w-full"
+            classList={{ hidden: remainingCards[card] <= 0 }}
             style={`grid-area: ${alphaNamedCards[i()]}`}
           >
             <img
